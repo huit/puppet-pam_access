@@ -1,5 +1,5 @@
 name    'huit-pam_access'
-version '0.0.1'
+version '0.0.2'
 author  'Harvard University Information Technology'
 license 'GPL'
 summary 'Manage access.conf entries'
