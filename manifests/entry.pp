@@ -46,10 +46,10 @@
 #
 define pam_access::entry (
   $create = true,
-  $permission = "+",
+  $permission = '+',
   $user = false,
   $group = false,
-  $origin = "LOCAL"
+  $origin = 'LOCAL'
 ) {
 
   if $pam_access {
@@ -65,14 +65,16 @@ define pam_access::entry (
     }
 
     Augeas {
-      require   => Class["pam_access"],
-      context   => "/files/etc/security/access.conf/"
+      require => Class['pam_access'],
+      context => '/files/etc/security/access.conf/',
+      incl    => '/etc/security/access.conf',
+      lens    => 'Access.lns'
     }
 
     if $pam_access::exec {
       Augeas {
-        before    => Exec["authconfig-access"],
-        notify    => Exec["authconfig-access"],
+        before    => Exec['authconfig-access'],
+        notify    => Exec['authconfig-access'],
       }
     }
 
@@ -111,7 +113,7 @@ define pam_access::entry (
     }
 
   } else {
-    debug("pam_access is not implemented on this platform, skipping")
+    debug('pam_access is not implemented on this platform, skipping')
   }
 
 }

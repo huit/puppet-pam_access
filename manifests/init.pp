@@ -8,7 +8,7 @@
 #   $exec: true, false
 #
 #   If true, pam_access will take care of calling authconfig to apply its
-#   changes; if false, you must do this yourself elsewhere in your manifest;
+#   changes; if false, you must do this yourself elsewhere in your manifest.
 #
 # Actions:
 #
