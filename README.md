@@ -1,4 +1,8 @@
-This module manages pam_access entries stored in /etc/security/access.conf.  It
+[![Build Status](https://travis-ci.org/huit/puppet-ilmt.png?branch=master)](https://travis-ci.org/huit/puppet-ilmt)
+
+# pam_access
+
+This module manages **pam_access** entries stored in `/etc/security/access.conf`.  It
 requires Augeas >= 0.8.0.
 
 Sample usage:
