@@ -52,7 +52,7 @@ define pam_access::entry (
   $origin = 'LOCAL'
 ) {
 
-  if $pam_access {
+  if $::pam_access {
 
     # validate params
     case $permission {
@@ -99,7 +99,7 @@ define pam_access::entry (
             "set access[last()-1]/user ${userstr}",
             "set access[last()-1]/origin ${origin}"
           ],
-          onlyif => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size == 0";
+          onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size == 0";
       }
     }
     else {
@@ -108,7 +108,7 @@ define pam_access::entry (
           changes => [
             "rm access[. = '${permission}'][user = '${userstr}'][origin = '${origin}']"
           ],
-          onlyif => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size > 0";
+          onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size > 0";
       }
     }
 
