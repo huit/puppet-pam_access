@@ -20,14 +20,13 @@
 class pam_access (
   $exec = true
 ) {
-  if $pam_access {
+  if $::pam_access {
 
     file { '/etc/security/access.conf':
       ensure  => 'present',
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
-      backup  => 'true';
     }
 
     if $pam_access::exec {
@@ -42,6 +41,6 @@ class pam_access (
     }
 
   } else {
-    debug("pam_access not implemented on this platform")
+    debug('pam_access not implemented on this platform')
   }
 }

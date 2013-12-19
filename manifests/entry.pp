@@ -65,7 +65,6 @@ define pam_access::entry (
     }
 
     Augeas {
-      require => Class['pam_access'],
       context => '/files/etc/security/access.conf/',
       incl    => '/etc/security/access.conf',
       lens    => 'Access.lns'
@@ -95,9 +94,10 @@ define pam_access::entry (
       augeas {
         "augeas-pam_access-create-${title}":
           changes => [
-            "set access[0] ${permission}",
-            "set access[last()]/user ${userstr}",
-            "set access[last()]/origin ${origin}"
+            'ins access before access[last()]',
+            "set access[last()-1] ${permission}",
+            "set access[last()-1]/user ${userstr}",
+            "set access[last()-1]/origin ${origin}"
           ],
           onlyif => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size == 0";
       }

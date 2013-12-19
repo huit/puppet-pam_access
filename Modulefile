@@ -1,7 +1,7 @@
 name    'huit-pam_access'
-version '0.0.2'
+version '0.1.0'
 author  'Harvard University Information Technology'
-license 'GPL'
+license 'MIT'
 summary 'Manage access.conf entries'
 description 'The pam_access module allows access control based on username, groupname, network address, and process name.  This module allows Puppet to manage entries in the access.conf file.'
 

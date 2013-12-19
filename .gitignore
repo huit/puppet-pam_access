@@ -1,1 +1,8 @@
 .pkg
+pkg/
+vendor
+spec/fixtures
+.rspec_system
+.bundle
+.*sw*
+Gemfile.lock
