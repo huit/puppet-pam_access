@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/huit/puppet-ilmt.png?branch=master)](https://travis-ci.org/huit/puppet-ilmt)
+[![Build Status](https://travis-ci.org/huit/puppet-pam_access.png?branch=master)](https://travis-ci.org/huit/puppet-pam_access)
 
 # pam_access
 
