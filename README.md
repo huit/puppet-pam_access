@@ -7,23 +7,25 @@ requires Augeas >= 0.8.0.
 
 Sample usage:
 
-    class {
-      'pam_access':
-        exec => true;
+    class { 'pam_access':
+      exec => true,
     }
 
-    pam_access::entry {
-      'mailman-cron':
-        user   => 'mailman',
-        origin => 'cron';
-      'root-localonly':
-        permission => '-',
-        user       => 'root',
-        origin     => 'ALL EXCEPT LOCAL';
-      'lusers-revoke-access':
-        create => false,
-        user   => 'lusers',
-        group  => true;
+    pam_access::entry { 'mailman-cron':
+      user   => 'mailman',
+      origin => 'cron',
+    }
+
+    pam_access::entry { 'root-localonly':
+      permission => '-',
+      user       => 'root',
+      origin     => 'ALL EXCEPT LOCAL',
+    }
+
+    pam_access::entry { 'lusers-revoke-access':
+      create => false,
+      user   => 'lusers',
+      group  => true,
     }
 
 Changes:
