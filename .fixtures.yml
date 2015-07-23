@@ -1,4 +1,3 @@
 fixtures:
   symlinks:
     pam_access: "#{source_dir}"
-

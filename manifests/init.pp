@@ -23,10 +23,10 @@ class pam_access (
   if $::pam_access {
 
     file { '/etc/security/access.conf':
-      ensure  => 'present',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
+      ensure => file,
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0644',
     }
 
     if $pam_access::exec {

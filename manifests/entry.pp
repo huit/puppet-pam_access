@@ -67,7 +67,7 @@ define pam_access::entry (
     Augeas {
       context => '/files/etc/security/access.conf/',
       incl    => '/etc/security/access.conf',
-      lens    => 'Access.lns'
+      lens    => 'Access.lns',
     }
 
     if $pam_access::exec {
@@ -97,7 +97,7 @@ define pam_access::entry (
             'ins access before access[last()]',
             "set access[last()-1] ${permission}",
             "set access[last()-1]/user ${userstr}",
-            "set access[last()-1]/origin ${origin}"
+            "set access[last()-1]/origin ${origin}",
           ],
           onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size == 0";
       }
@@ -106,7 +106,7 @@ define pam_access::entry (
       augeas {
         "augeas-pam_access-destroy-${title}":
           changes => [
-            "rm access[. = '${permission}'][user = '${userstr}'][origin = '${origin}']"
+            "rm access[. = '${permission}'][user = '${userstr}'][origin = '${origin}']",
           ],
           onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size > 0";
       }
