@@ -22,11 +22,13 @@ class pam_access (
   $manage_pam              = true,
   $enable_pamaccess_flags  = $pam_access::params::enable_pamaccess_flags,
   $disable_pamaccess_flags = $pam_access::params::disable_pamaccess_flags,
+  $entries                 = {},
 ) inherits pam_access::params {
 
   validate_re($ensure, ['\Aabsent|present\Z'])
   validate_bool($manage_pam)
   validate_array($enable_pamaccess_flags, $disable_pamaccess_flags)
+  validate_hash($entries)
 
   file { '/etc/security/access.conf':
     ensure => file,
@@ -42,5 +44,7 @@ class pam_access (
     } ->
     anchor { 'pam_access::end': }
   }
+
+  create_resources('pam_access::entry', $entries)
 
 }
