@@ -45,24 +45,19 @@
 #   }
 #
 define pam_access::entry (
-  $create = true,
+  $ensure     = present,
   $permission = '+',
-  $user = false,
-  $group = false,
-  $origin = 'LOCAL'
+  $user       = false,
+  $group      = false,
+  $origin     = 'LOCAL'
 ) {
 
   include ::pam_access
 
   # validate params
-  case $permission {
-    /^[+-]$/: {
-      debug("\$pam_access::entry::permission: ${permission}")
-    }
-    default: {
-      fail("\$pam_access::entry::permission must be '+' or '-'; '${permission}' received")
-    }
-  }
+  validate_re($ensure, ['\Aabsent|present\Z'])
+  validate_re($permission, ['\A[+-]\Z'], "\$pam_access::entry::permission must be '+' or '-'; '${permission}' received")
+  validate_bool($group)
 
   Augeas {
     context => '/files/etc/security/access.conf/',
@@ -70,10 +65,9 @@ define pam_access::entry (
     lens    => 'Access.lns',
   }
 
-  if $pam_access::exec {
+  if $pam_access::manage_pam {
     Augeas {
-      before    => Exec['authconfig-access'],
-      notify    => Exec['authconfig-access'],
+      notify => Class['pam_access::pam'],
     }
   }
 
@@ -90,25 +84,22 @@ define pam_access::entry (
     }
   }
 
-  if $create {
-    augeas {
-      "augeas-pam_access-create-${title}":
-        changes => [
-          'ins access before access[last()]',
-          "set access[last()-1] ${permission}",
-          "set access[last()-1]/user ${userstr}",
-          "set access[last()-1]/origin ${origin}",
-        ],
-        onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size == 0";
+  if $ensure == 'present' {
+    augeas { "augeas-pam_access-ensure-${ensure}-${title}":
+      changes => [
+        'ins access before access[last()]',
+        "set access[last()-1] ${permission}",
+        "set access[last()-1]/user ${userstr}",
+        "set access[last()-1]/origin ${origin}",
+      ],
+      onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size == 0",
     }
-  }
-  else {
-    augeas {
-      "augeas-pam_access-destroy-${title}":
-        changes => [
-          "rm access[. = '${permission}'][user = '${userstr}'][origin = '${origin}']",
-        ],
-        onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size > 0";
+  } else {
+    augeas { "augeas-pam_access-ensure-${ensure}-${title}":
+      changes => [
+        "rm access[. = '${permission}'][user = '${userstr}'][origin = '${origin}']",
+      ],
+      onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size > 0",
     }
   }
 
