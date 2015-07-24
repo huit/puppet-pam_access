@@ -18,8 +18,15 @@
 #
 # [Remember: No empty lines between comments and class definition]
 class pam_access (
-  $exec = true
+  $ensure                  = present,
+  $manage_pam              = true,
+  $enable_pamaccess_flags  = $pam_access::params::enable_pamaccess_flags,
+  $disable_pamaccess_flags = $pam_access::params::disable_pamaccess_flags,
 ) inherits pam_access::params {
+
+  validate_re($ensure, ['\Aabsent|present\Z'])
+  validate_bool($manage_pam)
+  validate_array($enable_pamaccess_flags, $disable_pamaccess_flags)
 
   file { '/etc/security/access.conf':
     ensure => file,
@@ -28,14 +35,12 @@ class pam_access (
     mode   => '0644',
   }
 
-  if $pam_access::exec {
-    exec { 'authconfig-access':
-      command => 'authconfig --enablelocauthorize --enablepamaccess --update',
-      path    => '/usr/bin:/usr/sbin:/bin',
-      unless  => "grep '^account.*required.*pam_access.so' \
-                    /etc/pam.d/system-auth 2>/dev/null",
+  if $manage_pam {
+    anchor { 'pam_access::begin': } ->
+    class { '::pam_access::pam':
       require => File['/etc/security/access.conf'],
-    }
+    } ->
+    anchor { 'pam_access::end': }
   }
 
 }

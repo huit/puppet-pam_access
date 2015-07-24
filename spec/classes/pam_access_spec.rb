@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'pam_access', :type => :class do
   describe 'does stuff if os supported' do
     let(:facts) { { :osfamily => 'RedHat', :operatingsystemrelease => '7.1' } }
-    let(:params) { { :exec => false } }
+    let(:params) { { :manage_pam => false } }
 
     it { should compile.with_all_deps }
 
@@ -17,16 +17,13 @@ describe 'pam_access', :type => :class do
     end
 
     describe 'execs authconfig-access' do
-      let(:params) { { :exec => true } }
+      let(:params) { { :manage_pam => true } }
 
       it { should compile.with_all_deps }
 
       it do
         should contain_exec('authconfig-access').with(
-          :command => 'authconfig --enablelocauthorize --enablepamaccess --update',
-          :path => '/usr/bin:/usr/sbin:/bin',
-          :unless => "grep '^account.*required.*pam_access.so' \
-                    /etc/pam.d/system-auth 2>/dev/null"
+          :command => '/usr/sbin/authconfig --enablelocauthorize --enablepamaccess --update'
         )
       end
     end

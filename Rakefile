@@ -20,12 +20,23 @@ PuppetLint.configuration.ignore_paths = exclude_paths
 PuppetSyntax.exclude_paths = exclude_paths
 
 Rake::Task[:default].prerequisites.clear
-task :default => :test
+task :default => :all
 
 desc 'Run RuboCop'
 task :rubocop do
   sh 'rubocop'
 end
+
+desc 'Clean up modules / pkg'
+task :clean do
+  sh 'rm -rf modules pkg'
+end
+
+desc 'Run all'
+task :all => [
+  :clean,
+  :test
+]
 
 desc 'Run rubocop, syntax, lint, and spec tests'
 task :test => [
