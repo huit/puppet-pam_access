@@ -1,6 +1,6 @@
 {
   "name": "huit-pam_access",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Harvard University Information Technology",
   "summary": "Manage access.conf entries",
   "license": "MIT",
