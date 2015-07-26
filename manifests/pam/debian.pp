@@ -6,6 +6,20 @@
 # [Remember: No empty lines between comments and class definition]
 class pam_access::pam::debian {
 
-  notify { "${name} not implemented on debian yet": }
+  pam { 'Set pam_access in login':
+    ensure  => $pam_access::ensure,
+    service => 'login',
+    type    => 'account',
+    control => 'required',
+    module  => 'pam_access.so',
+  }
+
+  pam { 'Set pam_access in sshd':
+    ensure  => $pam_access::ensure,
+    service => 'sshd',
+    type    => 'account',
+    control => 'required',
+    module  => 'pam_access.so',
+  }
 
 }
