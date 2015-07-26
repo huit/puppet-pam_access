@@ -2,9 +2,9 @@
 #
 # Parameters:
 #
-#   $create = true (default), false
+#   $ensure = present (default), absent
 #
-#     If $create is true, an access.conf entry will be created; otherwise, one
+#     If $create is present, an access.conf entry will be created; otherwise, one
 #     (or more) will be removed.
 #
 #   $user = username, (groupname), ALL (EXCEPT)
