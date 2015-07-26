@@ -30,6 +30,9 @@ Sample usage:
 
 Changes:
 
+0.2.2:
+    Fixes to work with groups
+
 0.2.1:
     Specify position as an parameter to pam_access::entry
     Fix for adding first entry to empty file via position

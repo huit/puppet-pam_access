@@ -58,7 +58,9 @@ define pam_access::entry (
   # validate params
   validate_re($ensure, ['\Aabsent|present\Z'])
   validate_re($permission, ['\A[+-]\Z'], "\$pam_access::entry::permission must be '+' or '-'; '${permission}' received")
-  validate_bool($group)
+  if $user and $group {
+    fail("\$pam_access::entry::user and \$pam_access::entry::group can not both be set")
+  }
   if $position {
     $real_position = $position
   } else {
@@ -82,16 +84,20 @@ define pam_access::entry (
   }
 
   if $user {
-    $userstr = $group ? {
-      true    => "(${user})",
-      default => $user
+    $userstr = $user ? {
+      true    => $title,
+      default => $user,
     }
-  }
-  else {
+    $context = 'user'
+  } elsif $group {
     $userstr = $group ? {
-      true    => "(${title})",
-      default => $title
+      true    => $title,
+      default => $group,
     }
+    $context = 'group'
+  } else {
+    $userstr = $title
+    $context = 'user'
   }
 
   case $ensure {
@@ -99,34 +105,34 @@ define pam_access::entry (
       $create_cmds = $real_position ? {
         'after'  => [
           "set access[last()+1] ${permission}",
-          "set access[last()]/user ${userstr}",
+          "set access[last()]/${context} ${userstr}",
           "set access[last()]/origin ${origin}",
         ],
         'before' => [
           'ins access before access[1]',
           "set access[1] ${permission}",
-          "set access[1]/user ${userstr}",
+          "set access[1]/${context} ${userstr}",
           "set access[1]/origin ${origin}",
         ],
         '-1'     => [
           'ins access before access[last()]',
           "set access[last()-1] ${permission}",
-          "set access[last()-1]/user ${userstr}",
+          "set access[last()-1]/${context} ${userstr}",
           "set access[last()-1]/origin ${origin}",
         ],
       }
 
-      augeas { "pam_access/${permission}:${userstr}:${origin}/${ensure}":
+      augeas { "pam_access/${context}/${permission}:${userstr}:${origin}/${ensure}":
         changes => $create_cmds,
-        onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size == 0",
+        onlyif  => "match access[. = '${permission}'][${context} = '${userstr}'][origin = '${origin}'] size == 0",
       }
     }
     'absent': {
-      augeas { "pam_access/${permission}:${userstr}:${origin}/${ensure}":
+      augeas { "pam_access/${context}/${permission}:${userstr}:${origin}/${ensure}":
         changes => [
-          "rm access[. = '${permission}'][user = '${userstr}'][origin = '${origin}']",
+          "rm access[. = '${permission}'][${context} = '${userstr}'][origin = '${origin}']",
         ],
-        onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size > 0",
+        onlyif  => "match access[. = '${permission}'][${context} = '${userstr}'][origin = '${origin}'] size > 0",
       }
     }
     default: { fail("Invalid ensure: ${ensure}") }
