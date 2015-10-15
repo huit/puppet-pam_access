@@ -1,7 +1,7 @@
 {
-  "name": "huit-pam_access",
+  "name": "MiamiOH-pam_access",
   "version": "1.0.0",
-  "author": "Harvard University Information Technology",
+  "author": "Harvard University Information Technology, Miami University Information Technology",
   "summary": "Manage access.conf entries",
   "license": "MIT",
   "source": "",
