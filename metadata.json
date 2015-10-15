@@ -4,7 +4,7 @@
   "author": "Harvard University Information Technology, Miami University Information Technology",
   "summary": "Manage access.conf entries",
   "license": "MIT",
-  "source": "",
+  "source": "https://github.com/MiamiOH/puppet-pam_access",
   "project_page": null,
   "issues_url": null,
   "tags": ["pam", "access"],
