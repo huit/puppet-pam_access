@@ -1,0 +1,16 @@
+{
+  "name": "MiamiOH-pam_access",
+  "version": "1.0.0",
+  "author": "Harvard University Information Technology, Miami University Information Technology",
+  "summary": "Manage access.conf entries",
+  "license": "MIT",
+  "source": "https://github.com/MiamiOH/puppet-pam_access",
+  "project_page": null,
+  "issues_url": null,
+  "tags": ["pam", "access"],
+  "description": "The pam_access module allows access control based on username, groupname, network address, and process name.  This module allows Puppet to manage entries in the access.conf file.",
+  "dependencies": [
+    {"name":"puppetlabs/stdlib","version_requirement":">= 4.1.0 <5.0.0"},
+    {"name":"herculesteam/augeasproviders_pam","version_requirement":">= 2.1.0 <3.0.0"}
+  ]
+}

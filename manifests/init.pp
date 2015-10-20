@@ -18,29 +18,33 @@
 #
 # [Remember: No empty lines between comments and class definition]
 class pam_access (
-  $exec = true
-) {
-  if $::pam_access {
+  $ensure                  = present,
+  $manage_pam              = true,
+  $enable_pamaccess_flags  = $pam_access::params::enable_pamaccess_flags,
+  $disable_pamaccess_flags = $pam_access::params::disable_pamaccess_flags,
+  $entries                 = {},
+) inherits pam_access::params {
 
-    file { '/etc/security/access.conf':
-      ensure  => 'present',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-    }
+  validate_re($ensure, ['\Aabsent|present\Z'])
+  validate_bool($manage_pam)
+  validate_array($enable_pamaccess_flags, $disable_pamaccess_flags)
+  validate_hash($entries)
 
-    if $pam_access::exec {
-
-      exec { 'authconfig-access':
-        command => 'authconfig --enablelocauthorize --enablepamaccess --update',
-        path    => '/usr/bin:/usr/sbin:/bin',
-        unless  => "grep '^account.*required.*pam_access.so' \
-                      /etc/pam.d/system-auth 2>/dev/null",
-        require => File['/etc/security/access.conf'],
-      }
-    }
-
-  } else {
-    debug('pam_access not implemented on this platform')
+  file { '/etc/security/access.conf':
+    ensure => file,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0644',
   }
+
+  if $manage_pam {
+    anchor { 'pam_access::begin': } ->
+    class { '::pam_access::pam':
+      require => File['/etc/security/access.conf'],
+    } ->
+    anchor { 'pam_access::end': }
+  }
+
+  create_resources('pam_access::entry', $entries)
+
 }

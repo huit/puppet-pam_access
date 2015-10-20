@@ -1,8 +1,9 @@
-.pkg
 pkg/
-vendor
-spec/fixtures
-.rspec_system
-.bundle
-.*sw*
 Gemfile.lock
+vendor/
+spec/fixtures
+.vagrant/
+.bundle
+coverage/
+.tmp/
+modules/

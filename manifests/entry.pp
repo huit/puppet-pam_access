@@ -2,9 +2,9 @@
 #
 # Parameters:
 #
-#   $create = true (default), false
+#   $ensure = present (default), absent
 #
-#     If $create is true, an access.conf entry will be created; otherwise, one
+#     If $create is present, an access.conf entry will be created; otherwise, one
 #     (or more) will be removed.
 #
 #   $user = username, (groupname), ALL (EXCEPT)
@@ -45,75 +45,97 @@
 #   }
 #
 define pam_access::entry (
-  $create = true,
+  $ensure     = present,
   $permission = '+',
-  $user = false,
-  $group = false,
-  $origin = 'LOCAL'
+  $user       = false,
+  $group      = false,
+  $origin     = 'LOCAL',
+  $position   = undef,
 ) {
 
-  if $::pam_access {
+  include ::pam_access
 
-    # validate params
-    case $permission {
-      /^[+-]$/: {
-        debug("\$pam_access::entry::permission: ${permission}")
-      }
-      default: {
-        fail("\$pam_access::entry::permission must be '+' or '-'; '${permission}' received")
-      }
-    }
-
-    Augeas {
-      context => '/files/etc/security/access.conf/',
-      incl    => '/etc/security/access.conf',
-      lens    => 'Access.lns'
-    }
-
-    if $pam_access::exec {
-      Augeas {
-        before    => Exec['authconfig-access'],
-        notify    => Exec['authconfig-access'],
-      }
-    }
-
-    if $user {
-      $userstr = $group ? {
-        true    => "(${user})",
-        default => $user
-      }
-    }
-    else {
-      $userstr = $group ? {
-        true    => "(${title})",
-        default => $title
-      }
-    }
-
-    if $create {
-      augeas {
-        "augeas-pam_access-create-${title}":
-          changes => [
-            'ins access before access[last()]',
-            "set access[last()-1] ${permission}",
-            "set access[last()-1]/user ${userstr}",
-            "set access[last()-1]/origin ${origin}"
-          ],
-          onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size == 0";
-      }
-    }
-    else {
-      augeas {
-        "augeas-pam_access-destroy-${title}":
-          changes => [
-            "rm access[. = '${permission}'][user = '${userstr}'][origin = '${origin}']"
-          ],
-          onlyif  => "match access[. = '${permission}'][user = '${userstr}'][origin = '${origin}'] size > 0";
-      }
-    }
-
+  # validate params
+  validate_re($ensure, ['\Aabsent|present\Z'])
+  validate_re($permission, ['\A[+-]\Z'], "\$pam_access::entry::permission must be '+' or '-'; '${permission}' received")
+  if $user and $group {
+    fail("\$pam_access::entry::user and \$pam_access::entry::group can not both be set")
+  }
+  if $position {
+    $real_position = $position
   } else {
-    debug('pam_access is not implemented on this platform, skipping')
+    $real_position = $permission ? {
+      '+' => 'before',
+      '-' => 'after',
+    }
+  }
+  validate_re($real_position, ['\Aafter|before|-1\Z'])
+
+  Augeas {
+    context => '/files/etc/security/access.conf/',
+    incl    => '/etc/security/access.conf',
+    lens    => 'Access.lns',
+  }
+
+  if $pam_access::manage_pam {
+    Augeas {
+      notify => Class['pam_access::pam'],
+    }
+  }
+
+  if $user {
+    $userstr = $user ? {
+      true    => $title,
+      default => $user,
+    }
+    $context = 'user'
+  } elsif $group {
+    $userstr = $group ? {
+      true    => $title,
+      default => $group,
+    }
+    $context = 'group'
+  } else {
+    $userstr = $title
+    $context = 'user'
+  }
+
+  case $ensure {
+    'present': {
+      $create_cmds = $real_position ? {
+        'after'  => [
+          "set access[last()+1] ${permission}",
+          "set access[last()]/${context} ${userstr}",
+          "set access[last()]/origin ${origin}",
+        ],
+        'before' => [
+          'ins access before access[1]',
+          "set access[1] ${permission}",
+          "set access[1]/${context} ${userstr}",
+          "set access[1]/origin ${origin}",
+        ],
+        '-1'     => [
+          'ins access before access[last()]',
+          "set access[last()-1] ${permission}",
+          "set access[last()-1]/${context} ${userstr}",
+          "set access[last()-1]/origin ${origin}",
+        ],
+      }
+
+      augeas { "pam_access/${context}/${permission}:${userstr}:${origin}/${ensure}":
+        changes => $create_cmds,
+        onlyif  => "match access[. = '${permission}'][${context} = '${userstr}'][origin = '${origin}'] size == 0",
+      }
+    }
+    'absent': {
+      augeas { "pam_access/${context}/${permission}:${userstr}:${origin}/${ensure}":
+        changes => [
+          "rm access[. = '${permission}'][${context} = '${userstr}'][origin = '${origin}']",
+        ],
+        onlyif  => "match access[. = '${permission}'][${context} = '${userstr}'][origin = '${origin}'] size > 0",
+      }
+    }
+    default: { fail("Invalid ensure: ${ensure}") }
   }
 
 }

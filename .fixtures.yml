@@ -1,4 +1,6 @@
 fixtures:
+  repositories:
+    stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib"
+    augeasproviders_pam: "https://github.com/hercules-team/augeasproviders_pam"
   symlinks:
     pam_access: "#{source_dir}"
-
