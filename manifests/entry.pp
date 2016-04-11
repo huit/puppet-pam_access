@@ -4,7 +4,7 @@
 #
 #   $ensure = present (default), absent
 #
-#     If $create is present, an access.conf entry will be created; otherwise, one
+#     If $ensure is present, an access.conf entry will be created; otherwise, one
 #     (or more) will be removed.
 #
 #   $user = username, (groupname), ALL (EXCEPT)
@@ -32,14 +32,14 @@
 #
 #   pam_access::entry {
 #     "mailman-cron":
-#       user   => "mailman",
+#       user   => "mailman",c
 #       origin => "cron";
 #     "root-localonly":
 #       permission => "-",
 #       user       => "root",
 #       origin     => "ALL EXCEPT LOCAL";
 #     "lusers-revoke-access":
-#       create => false,
+#       ensure => absent,
 #       user   => "lusers",
 #       group  => true;
 #   }
