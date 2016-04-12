@@ -32,7 +32,7 @@
 #
 #   pam_access::entry {
 #     "mailman-cron":
-#       user   => "mailman",c
+#       user   => "mailman",
 #       origin => "cron";
 #     "root-localonly":
 #       permission => "-",
