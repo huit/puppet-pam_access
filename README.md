@@ -1,6 +1,10 @@
 [![Build Status](https://travis-ci.org/huit/puppet-pam_access.png?branch=master)](https://travis-ci.org/huit/puppet-pam_access)
 
-# pam_access
+# [DEPRECATED] pam_access
+
+Development will be continued here:
+https://forge.puppet.com/MiamiOH/pam_access
+https://github.com/MiamiOH/puppet-pam_access
 
 This module manages **pam_access** entries stored in `/etc/security/access.conf`.  It
 requires Augeas >= 0.8.0.
