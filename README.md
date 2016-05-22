@@ -3,7 +3,9 @@
 # [DEPRECATED] pam_access
 
 Development will be continued here:
+
 https://forge.puppet.com/MiamiOH/pam_access
+
 https://github.com/MiamiOH/puppet-pam_access
 
 This module manages **pam_access** entries stored in `/etc/security/access.conf`.  It
