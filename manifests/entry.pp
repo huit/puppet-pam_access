@@ -4,7 +4,7 @@
 #
 #   $ensure = present (default), absent
 #
-#     If $create is present, an access.conf entry will be created; otherwise, one
+#     If $ensure is present, an access.conf entry will be created; otherwise, one
 #     (or more) will be removed.
 #
 #   $user = username, (groupname), ALL (EXCEPT)
@@ -39,7 +39,7 @@
 #       user       => "root",
 #       origin     => "ALL EXCEPT LOCAL";
 #     "lusers-revoke-access":
-#       create => false,
+#       ensure => absent,
 #       user   => "lusers",
 #       group  => true;
 #   }
