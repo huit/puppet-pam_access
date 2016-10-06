@@ -10,16 +10,19 @@ AllCops:
     - '**/*.gemspec'
     - '**/*.rake'
     - '**/Gemfile'
+    - '**/Puppetfile'
     - '**/Rakefile'
     - '**/Guardfile'
   Exclude:
+    - 'modules/**/*'
     - 'pkg/**/*'
-  RunRailsCops: false
+    - 'spec/fixtures/**/*'
+    - 'vendor/**/*'
   DisplayCopNames: true
 
 Metrics/LineLength:
   # Ruduce this... Max: 80
-  Max: 100
+  Max: 111
 
 # Cop supports --auto-correct.
 # Configuration parameters: SupportedStyles.
