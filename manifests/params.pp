@@ -5,9 +5,8 @@
 # [Remember: No empty lines between comments and class definition]
 class pam_access::params {
 
-  if ($::osfamily == 'RedHat') and (
-    (versioncmp($::operatingsystemrelease, '5.0') >= 0) or
-    (($::operatingsystem == 'Amazon') and (versioncmp($::operatingsystemrelease, '2') >= 0))
+  if (($::osfamily == 'RedHat') and (versioncmp($::operatingsystemrelease, '5.0') >= 0)) or (
+    ($::operatingsystem == 'Amazon') and (versioncmp($::operatingsystemrelease, '2') >= 0)
   ) {
     $enable_pamaccess_flags  = ['--enablelocauthorize', '--enablepamaccess']
     $disable_pamaccess_flags = ['--enablelocauthorize', '--disablepamaccess']
