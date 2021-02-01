@@ -1,6 +1,6 @@
 {
   "name": "MiamiOH-pam_access",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Harvard University Information Technology, Miami University Information Technology",
   "summary": "Manage access.conf entries with Augeas",
   "license": "MIT",
@@ -32,6 +32,12 @@
         "5",
         "6",
         "7"
+      ]
+    },
+    {
+      "operatingsystem": "Amazon",
+      "operatingsystemrelease": [
+        "2"
       ]
     },
     {
